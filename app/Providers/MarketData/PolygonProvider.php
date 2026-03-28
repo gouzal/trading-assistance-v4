@@ -34,4 +34,5 @@ class PolygonProvider implements MarketDataProviderInterface
     public function getPriceTarget(string $symbol): ?float { return null; }
     public function getRevenueEstimate(string $symbol): ?float { return null; }
     public function getAnalystRecommendation(string $symbol): array { return []; }
+    public function searchSymbol(string $query): array { return []; }
 }

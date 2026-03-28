@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\WatchlistRequest;
-use App\Http\Resources\CompanyResource;
 use App\Models\Company;
 use App\Services\MarketDataService;
 use Illuminate\Http\Request;
@@ -36,7 +35,7 @@ class CompanyController extends Controller
             $company->update(['is_favorite' => true]);
         }
 
-        return redirect()->route('companies.index')->with('success', "{$symbol} added to watchlist.");
+        return redirect()->route('companies.index', ['tab' => 'watchlist'])->with('success', "{$symbol} added to watchlist.");
     }
 
     public function destroy(string $symbol)
@@ -54,17 +53,23 @@ class CompanyController extends Controller
 
     public function search(Request $request)
     {
-        $q = strtoupper(trim($request->string('q')));
+        $q = trim($request->string('q'));
         if (strlen($q) < 1) {
             return response()->json([]);
         }
 
-        $companies = Company::where('symbol', 'like', "{$q}%")
-            ->orWhere('name', 'like', "%{$q}%")
-            ->limit(10)
-            ->get(['symbol', 'name', 'logo_url']);
+        try {
+            $results = $this->marketDataService->searchSymbols($q);
+        } catch (\Exception) {
+            // Provider unavailable — fall back to local DB
+            $results = Company::where('symbol', 'like', strtoupper("{$q}%"))
+                ->orWhere('name', 'like', "%{$q}%")
+                ->limit(10)
+                ->get(['symbol', 'name', 'logo_url', 'is_favorite'])
+                ->toArray();
+        }
 
-        return CompanyResource::collection($companies);
+        return response()->json($results);
     }
 
     public function quote(string $symbol)

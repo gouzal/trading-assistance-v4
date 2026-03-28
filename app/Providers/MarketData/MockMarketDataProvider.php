@@ -44,4 +44,24 @@ class MockMarketDataProvider implements MarketDataProviderInterface
     {
         return ['buy' => 20, 'hold' => 8, 'sell' => 3, 'strongBuy' => 10, 'strongSell' => 1];
     }
+
+    public function searchSymbol(string $query): array
+    {
+        $mock = [
+            ['symbol' => 'AAPL',  'name' => 'Apple Inc.',            'logo_url' => null],
+            ['symbol' => 'MSFT',  'name' => 'Microsoft Corporation', 'logo_url' => null],
+            ['symbol' => 'GOOGL', 'name' => 'Alphabet Inc.',         'logo_url' => null],
+            ['symbol' => 'AMZN',  'name' => 'Amazon.com Inc.',       'logo_url' => null],
+            ['symbol' => 'TSLA',  'name' => 'Tesla Inc.',            'logo_url' => null],
+            ['symbol' => 'NVDA',  'name' => 'NVIDIA Corporation',    'logo_url' => null],
+            ['symbol' => 'META',  'name' => 'Meta Platforms Inc.',   'logo_url' => null],
+        ];
+
+        $q = strtoupper($query);
+        return array_values(array_filter(
+            $mock,
+            fn ($c) => str_contains(strtoupper($c['symbol']), $q)
+                    || str_contains(strtoupper($c['name']), $q)
+        ));
+    }
 }

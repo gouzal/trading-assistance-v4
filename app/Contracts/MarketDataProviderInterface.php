@@ -17,4 +17,7 @@ interface MarketDataProviderInterface
     public function getPriceTarget(string $symbol): ?float;
     public function getRevenueEstimate(string $symbol): ?float;
     public function getAnalystRecommendation(string $symbol): array;
+
+    /** @return array<int, array{symbol: string, name: string, logo_url: null}> */
+    public function searchSymbol(string $query): array;
 }

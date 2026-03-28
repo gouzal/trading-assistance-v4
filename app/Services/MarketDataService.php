@@ -36,6 +36,28 @@ class MarketDataService
         );
     }
 
+    public function searchSymbols(string $query): array
+    {
+        $results = $this->provider->searchSymbol($query);
+
+        if (empty($results)) {
+            return [];
+        }
+
+        $symbols    = array_column($results, 'symbol');
+        $favorites  = Company::whereIn('symbol', $symbols)
+            ->where('is_favorite', true)
+            ->pluck('symbol')
+            ->flip()
+            ->all();
+
+        foreach ($results as &$item) {
+            $item['is_favorite'] = isset($favorites[$item['symbol']]);
+        }
+
+        return $results;
+    }
+
     public function syncEarningsCalendar(string $from, string $to): int
     {
         $earnings = Cache::remember(

@@ -139,4 +139,20 @@ class FinnhubProvider implements MarketDataProviderInterface
         $data = $this->get('/stock/recommendation', ['symbol' => $symbol]);
         return $data[0] ?? [];
     }
+
+    public function searchSymbol(string $query): array
+    {
+        $data = $this->get('/search', ['q' => $query, 'exchange' => 'US']);
+
+        return collect($data['result'] ?? [])
+            ->filter(fn ($r) => ($r['type'] ?? '') === 'Common Stock')
+            ->take(10)
+            ->map(fn ($r) => [
+                'symbol'   => $r['displaySymbol'] ?? $r['symbol'],
+                'name'     => $r['description'] ?? $r['symbol'],
+                'logo_url' => null,
+            ])
+            ->values()
+            ->all();
+    }
 }
