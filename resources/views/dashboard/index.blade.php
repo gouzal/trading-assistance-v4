@@ -11,18 +11,33 @@
                 <h2 class="text-3xl font-extrabold tracking-tight text-on-surface mb-2">Earnings Calendar</h2>
                 <p class="text-on-surface-variant max-w-2xl">High-impact financial reporting dates for your watchlist and top market movers.</p>
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex flex-wrap items-center gap-3">
+                {{-- Sort toggles --}}
+                @php
+                    $baseParams = ['weeks' => $weeks, 'watchlist_only' => $watchlistOnly ? '1' : '0'];
+                @endphp
+                <a href="{{ route('dashboard', array_merge($baseParams, ['sort' => $sort === 'sentiment' ? null : 'sentiment'])) }}"
+                    class="flex items-center gap-1.5 {{ $sort === 'sentiment' ? 'bg-secondary text-on-secondary' : 'bg-surface-container-high text-on-surface border border-outline-variant' }} px-4 py-2 rounded-xl text-sm font-medium transition-colors">
+                    <span class="material-symbols-outlined text-sm">trending_up</span>
+                    Buy Sentiment
+                </a>
+                <a href="{{ route('dashboard', array_merge($baseParams, ['sort' => $sort === 'price' ? null : 'price'])) }}"
+                    class="flex items-center gap-1.5 {{ $sort === 'price' ? 'bg-secondary text-on-secondary' : 'bg-surface-container-high text-on-surface border border-outline-variant' }} px-4 py-2 rounded-xl text-sm font-medium transition-colors">
+                    <span class="material-symbols-outlined text-sm">attach_money</span>
+                    Price
+                </a>
+
                 {{-- Date range filter --}}
                 <div class="flex items-center gap-2">
                     <div class="flex bg-surface-container rounded-xl p-1">
                         @foreach([1,2,3,4] as $w)
-                            <a href="{{ route('dashboard', ['weeks' => $w, 'watchlist_only' => $watchlistOnly ? '1' : '0']) }}"
+                            <a href="{{ route('dashboard', array_merge($baseParams, ['weeks' => $w])) }}"
                                 class="{{ $weeks == $w ? 'bg-white shadow-sm text-primary font-semibold' : 'text-on-surface-variant font-medium' }} px-4 py-1.5 rounded-lg text-sm transition-all">
                                 {{ $w }}w
                             </a>
                         @endforeach
                     </div>
-                    <a href="{{ route('dashboard', ['weeks' => $weeks, 'watchlist_only' => $watchlistOnly ? '0' : '1']) }}"
+                    <a href="{{ route('dashboard', array_merge($baseParams, ['watchlist_only' => $watchlistOnly ? '0' : '1'])) }}"
                         class="flex items-center gap-2 {{ $watchlistOnly ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface border border-outline-variant' }} px-4 py-2 rounded-xl font-medium transition-colors">
                         <span class="material-symbols-outlined text-sm">star</span>
                         {{ $watchlistOnly ? 'All' : 'Watchlist' }}
