@@ -42,11 +42,17 @@
                             </a>
                         @endforeach
                     </div>
-                    <a href="{{ route('dashboard', array_merge($baseParams, ['watchlist_only' => $watchlistOnly ? '0' : '1'])) }}"
-                        class="flex items-center gap-2 {{ $watchlistOnly ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface border border-outline-variant' }} px-4 py-2 rounded-xl font-medium transition-colors">
-                        <span class="material-symbols-outlined text-sm">star</span>
-                        {{ $watchlistOnly ? 'All' : 'Watchlist' }}
-                    </a>
+                    <div class="flex bg-surface-container rounded-xl p-1">
+                        <a href="{{ route('dashboard', array_merge($baseParams, ['watchlist_only' => '0'])) }}"
+                            class="{{ !$watchlistOnly ? 'bg-white shadow-sm text-primary font-semibold' : 'text-on-surface-variant font-medium' }} px-4 py-1.5 rounded-lg text-sm transition-all">
+                            All
+                        </a>
+                        <a href="{{ route('dashboard', array_merge($baseParams, ['watchlist_only' => '1'])) }}"
+                            class="{{ $watchlistOnly ? 'bg-white shadow-sm text-primary font-semibold' : 'text-on-surface-variant font-medium' }} flex items-center gap-1 px-4 py-1.5 rounded-lg text-sm transition-all">
+                            <span class="material-symbols-outlined text-xs">star</span>
+                            Watchlist
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
