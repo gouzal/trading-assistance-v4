@@ -104,10 +104,10 @@
             {{-- Buy/Sell Tabs --}}
             <div class="flex p-1 bg-surface-container-high rounded-lg">
                 <button @click="side = 'buy'"
-                    :class="side === 'buy' ? 'bg-primary text-on-primary shadow-sm' : 'text-on-surface-variant hover:text-on-surface'"
+                    :class="side === 'buy' ? 'bg-green-600 text-white shadow-sm' : 'text-on-surface-variant hover:text-on-surface'"
                     class="flex-1 py-2 text-center font-bold rounded-md transition-all">Buy</button>
                 <button @click="side = 'sell'"
-                    :class="side === 'sell' ? 'bg-on-surface text-surface shadow-sm' : 'text-on-surface-variant hover:text-on-surface'"
+                    :class="side === 'sell' ? 'bg-red-600 text-white shadow-sm' : 'text-on-surface-variant hover:text-on-surface'"
                     class="flex-1 py-2 text-center font-bold rounded-md transition-all">Sell</button>
             </div>
 
@@ -174,8 +174,8 @@
         <div class="p-6 pt-0 flex flex-col sm:flex-row gap-3">
             <button @click="placeOrder()"
                 :disabled="submitting"
-                :class="side === 'buy' ? 'bg-primary text-on-primary shadow-primary/20' : 'bg-on-surface text-surface'"
-                class="flex-1 py-4 font-extrabold text-lg rounded-xl shadow-lg hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                :class="side === 'buy' ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-red-600 hover:bg-red-700 text-white'"
+                class="flex-1 py-4 font-extrabold text-lg rounded-xl shadow-lg active:scale-[0.98] transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                 <span x-show="!submitting" x-text="side === 'buy' ? 'Confirm Buy' : 'Confirm Sell'"></span>
                 <span x-show="submitting">Submitting...</span>
             </button>

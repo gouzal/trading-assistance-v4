@@ -169,11 +169,19 @@
 
                     {{-- Sentiment --}}
                     @if($sentiment)
+                    @php
+                        $ratingLabel = $sentiment->analyst_rating ?? $sentiment->sentiment_label ?? '—';
+                        $ratingClass = match($ratingLabel) {
+                            'Strong Buy', 'Buy'   => 'text-green-700 bg-green-100',
+                            'Strong Sell', 'Sell' => 'text-red-700 bg-red-100',
+                            default               => 'text-gray-500 bg-gray-100',
+                        };
+                    @endphp
                     <div class="mb-6">
                         <div class="flex justify-between items-center mb-2">
                             <span class="text-xs font-bold text-on-surface">Analyst Consensus</span>
-                            <span class="text-xs font-black text-tertiary px-2 py-0.5 bg-tertiary-fixed rounded-full">
-                                {{ $sentiment->analyst_rating ?? $sentiment->sentiment_label ?? '—' }}
+                            <span class="text-xs font-black px-2 py-0.5 rounded-full {{ $ratingClass }}">
+                                {{ $ratingLabel }}
                             </span>
                         </div>
                         <div class="space-y-1">
@@ -182,7 +190,7 @@
                                 <span>{{ $bullishPct }}%</span>
                             </div>
                             <div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden">
-                                <div class="h-full bg-tertiary" style="width: {{ $bullishPct }}%"></div>
+                                <div class="h-full rounded-full" style="width: {{ $bullishPct }}%; background: linear-gradient(to right, #dc2626, #f97316, #22c55e) 0 / {{ $bullishPct > 0 ? (100 / $bullishPct * 100) : 100 }}% 100%"></div>
                             </div>
                         </div>
                     </div>
@@ -192,11 +200,11 @@
                 {{-- Actions --}}
                 <div class="p-4 {{ $isFavorite ? 'bg-surface-container' : 'bg-surface-container-low' }} flex gap-3">
                     <button @click="showModal = true; $dispatch('open-trade-modal', { symbol: '{{ $earning->symbol }}', name: '{{ addslashes($company?->name ?? $earning->symbol) }}', price: '{{ $price?->current_price ?? 0 }}', side: 'buy' })"
-                        class="flex-1 bg-primary text-on-primary py-3 rounded-xl font-bold text-sm tracking-wide shadow-md active:scale-95 transition-transform">
+                        class="flex-1 bg-green-600 text-white py-3 rounded-xl font-bold text-sm tracking-wide shadow-md active:scale-95 transition-transform hover:bg-green-700">
                         BUY
                     </button>
                     <button @click="showModal = true; $dispatch('open-trade-modal', { symbol: '{{ $earning->symbol }}', name: '{{ addslashes($company?->name ?? $earning->symbol) }}', price: '{{ $price?->current_price ?? 0 }}', side: 'sell' })"
-                        class="flex-1 bg-on-surface text-surface py-3 rounded-xl font-bold text-sm tracking-wide shadow-md active:scale-95 transition-transform">
+                        class="flex-1 bg-red-600 text-white py-3 rounded-xl font-bold text-sm tracking-wide shadow-md active:scale-95 transition-transform hover:bg-red-700">
                         SELL
                     </button>
                 </div>
