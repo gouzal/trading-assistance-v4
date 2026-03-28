@@ -1,4 +1,4 @@
-const CACHE_NAME = 'trading-assistant-v1';
+const CACHE_NAME = 'trading-assistant-v3';
 const STATIC_ASSETS = ['/dashboard', '/manifest.json'];
 
 self.addEventListener('install', event => {
@@ -20,17 +20,26 @@ self.addEventListener('activate', event => {
 self.addEventListener('push', event => {
     const data = event.data ? event.data.json() : {};
     const title = data.title || 'Trading Assistant';
+
     const options = {
-        body:    data.body  || '',
-        icon:    data.icon  || '/icons/icon-192.png',
-        badge:   data.badge || '/icons/icon-192.png',
-        actions: data.actions || [],
+        body:               data.body  || '',
+        icon:               '/icons/icon-192.png',
+        badge:              '/icons/icon-192.png',
+        requireInteraction: true,
         data: {
             symbol: data.symbol || null,
             days:   data.days   ?? null,
         },
-        requireInteraction: true,
     };
+
+    // Always attach Buy/Dismiss if this is a stock alert
+    if (data.symbol) {
+        options.actions = [
+            { action: 'buy',     title: 'Buy' },
+            { action: 'dismiss', title: 'Dismiss' },
+        ];
+    }
+
     event.waitUntil(self.registration.showNotification(title, options));
 });
 

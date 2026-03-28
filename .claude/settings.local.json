@@ -16,7 +16,18 @@
       "Read(//c/Program Files/Common Files//**)",
       "Read(//c/Program Files/Common Files/**)",
       "Read(//c/Windows/**)",
-      "Bash(OPENSSL_CONF=\"C:/Program Files/php-8.4.13/extras/ssl/openssl.cnf\" php -r \":*)"
+      "Bash(OPENSSL_CONF=\"C:/Program Files/php-8.4.13/extras/ssl/openssl.cnf\" php -r \":*)",
+      "Bash(\"c:\\\\Users\\\\Larbi\\\\Desktop\\\\Projects\\\\Projects\\\\trading-assistance-v4\\\\.env\")",
+      "Bash(ngrok version:*)",
+      "Bash(curl -s http://localhost:8000/build/assets/app-D2Jp2gLD.css -o /dev/null -w \"%{http_code}\")",
+      "Bash(curl -s https://bankerly-unfiercely-tamar.ngrok-free.dev/build/assets/app-D2Jp2gLD.css -o /dev/null -w \"%{http_code}\" -L)",
+      "Bash(curl -s \"https://bankerly-unfiercely-tamar.ngrok-free.dev/\" -L)",
+      "Bash(taskkill /F /IM node.exe)",
+      "Bash(taskkill /IM node.exe /F)",
+      "Bash(cmd /c \"taskkill /IM node.exe /F\")",
+      "Bash(OPENSSL_CONF=\"C:/Program Files/php-8.4.13/extras/ssl/openssl.cnf\" php artisan notifications:test-push)",
+      "Bash(curl -s -o \"C:/Program Files/php-8.4.13/extras/ssl/cacert.pem\" https://curl.se/ca/cacert.pem)",
+      "Bash(curl -s -o \"$USERPROFILE/cacert.pem\" https://curl.se/ca/cacert.pem)"
     ]
   }
 }

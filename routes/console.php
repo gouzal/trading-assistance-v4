@@ -25,3 +25,10 @@ Schedule::command('notifications:send-strong-buy')
     ->dailyAt('09:00')
     ->timezone('America/New_York')
     ->description('Daily Strong Buy earnings alert push notification');
+
+// Test mode — disable by setting PUSH_TEST_MODE=false in .env
+if (env('PUSH_TEST_MODE', false)) {
+    Schedule::command('notifications:test-push')
+        ->everyThirtyMinutes()
+        ->description('Test push notification every 30 minutes');
+}

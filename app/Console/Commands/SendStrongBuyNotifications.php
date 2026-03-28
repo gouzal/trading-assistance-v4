@@ -53,7 +53,7 @@ class SendStrongBuyNotifications extends Command
             ],
         ];
 
-        $webPush  = new WebPush($auth);
+        $webPush = new WebPush($auth, [], 30, ['verify' => 'C:/Users/Larbi/cacert.pem']);
         $sent     = 0;
         $failed   = 0;
 
