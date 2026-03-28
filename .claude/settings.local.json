@@ -8,7 +8,8 @@
       "Bash(php artisan:*)",
       "Bash(grep -E \"\\\\.php$\")",
       "Bash(php -r \":*)",
-      "Bash(grep -l \"StockPrice\\\\|UserSetting\\\\|CompanyFinancial\" \"c:\\\\Users\\\\Larbi\\\\Desktop\\\\Projects\\\\Projects\\\\trading-assistance-v4/database/migrations/\"*.php)"
+      "Bash(grep -l \"StockPrice\\\\|UserSetting\\\\|CompanyFinancial\" \"c:\\\\Users\\\\Larbi\\\\Desktop\\\\Projects\\\\Projects\\\\trading-assistance-v4/database/migrations/\"*.php)",
+      "Bash(curl -s \"https://finnhub.io/api/v1/search?q=orcl&exchange=US&token=d19nsb1r01qmm7u0btvgd19nsb1r01qmm7u0bu00\")"
     ]
   }
 }

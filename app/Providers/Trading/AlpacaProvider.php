@@ -52,7 +52,11 @@ class AlpacaProvider implements TradingProviderInterface
     {
         $response = $this->client()->get('/v2/positions');
         $positions = [];
-        foreach ($response->json() ?? [] as $p) {
+        $data = $response->json();
+        if (!$response->successful() || !is_array($data) || array_is_list($data) === false) {
+            return $positions;
+        }
+        foreach ($data as $p) {
             $positions[] = new PositionDTO(
                 symbol: $p['symbol'],
                 quantity: (int) $p['qty'],

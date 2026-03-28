@@ -34,7 +34,7 @@
                 </a>
                 <a href="{{ route('companies.index') }}"
                    class="{{ request()->routeIs('companies.*') ? 'text-orange-600 font-medium' : 'text-zinc-500 hover:bg-zinc-100 transition-colors px-3 py-2 rounded-lg' }}">
-                    Watchlist
+                    Companies
                 </a>
                 <a href="{{ route('orders.history') }}"
                    class="{{ request()->routeIs('orders.*') ? 'text-orange-600 font-medium' : 'text-zinc-500 hover:bg-zinc-100 transition-colors px-3 py-2 rounded-lg' }}">
@@ -91,7 +91,7 @@
         <a href="{{ route('companies.index') }}"
            class="flex flex-col items-center justify-center {{ request()->routeIs('companies.*') ? 'text-orange-600 bg-orange-50 rounded-xl px-3 py-1' : 'text-zinc-500' }} active:scale-90 transition-transform">
             <span class="material-symbols-outlined mb-0.5" @if(request()->routeIs('companies.*')) style="font-variation-settings: 'FILL' 1;" @endif>star</span>
-            <span>Watchlist</span>
+            <span>Companies</span>
         </a>
         <a href="{{ route('orders.history') }}"
            class="flex flex-col items-center justify-center {{ request()->routeIs('orders.*') ? 'text-orange-600 bg-orange-50 rounded-xl px-3 py-1' : 'text-zinc-500' }} active:scale-90 transition-transform">

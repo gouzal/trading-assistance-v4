@@ -66,13 +66,13 @@ class MarketDataService
             fn () => $this->provider->getEarningsCalendar($from, $to)
         );
 
+        $trackedSymbols = Company::pluck('symbol')->flip()->all();
+
         $count = 0;
         foreach ($earnings as $dto) {
-            // Ensure company exists
-            Company::firstOrCreate(
-                ['symbol' => $dto->symbol],
-                ['name' => $dto->symbol, 'added_by' => 'system']
-            );
+            if (!isset($trackedSymbols[$dto->symbol])) {
+                continue;
+            }
 
             Earning::updateOrCreate(
                 ['symbol' => $dto->symbol, 'announcement_date' => $dto->announcementDate],
