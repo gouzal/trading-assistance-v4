@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\TradingController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\PushSubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => redirect()->route('dashboard'));
@@ -26,6 +27,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/symbols/search', [CompanyController::class, 'search'])->name('api.symbols.search');
         Route::get('/quotes/{symbol}', [CompanyController::class, 'quote'])->name('api.quotes');
         Route::get('/account', [TradingController::class, 'account'])->name('api.account');
+
+        // Push notifications
+        Route::get('/push/vapid-key', [PushSubscriptionController::class, 'vapidKey'])->name('api.push.vapid-key');
+        Route::post('/push/subscribe', [PushSubscriptionController::class, 'store'])->name('api.push.subscribe');
+        Route::post('/push/unsubscribe', [PushSubscriptionController::class, 'destroy'])->name('api.push.unsubscribe');
+        Route::post('/push/response', [PushSubscriptionController::class, 'recordResponse'])->name('api.push.response');
     });
 });
 

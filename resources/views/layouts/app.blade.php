@@ -102,7 +102,46 @@
 
     <script>
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').catch(console.error);
+            navigator.serviceWorker.register('/sw.js').then(async (registration) => {
+                // Only subscribe if permission not yet denied
+                if (Notification.permission === 'denied') return;
+
+                // Fetch the VAPID public key
+                const res  = await fetch('/api/push/vapid-key');
+                const data = await res.json();
+                const applicationServerKey = urlBase64ToUint8Array(data.public_key);
+
+                // Check for existing subscription
+                let sub = await registration.pushManager.getSubscription();
+
+                if (!sub) {
+                    const perm = await Notification.requestPermission();
+                    if (perm !== 'granted') return;
+
+                    sub = await registration.pushManager.subscribe({
+                        userVisibleOnly:      true,
+                        applicationServerKey: applicationServerKey,
+                    });
+                }
+
+                // Send subscription to server
+                await fetch('/api/push/subscribe', {
+                    method:  'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                    },
+                    body: JSON.stringify(sub.toJSON()),
+                });
+
+            }).catch(console.error);
+        }
+
+        function urlBase64ToUint8Array(base64String) {
+            const padding = '='.repeat((4 - base64String.length % 4) % 4);
+            const base64  = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+            const raw     = atob(base64);
+            return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
         }
     </script>
     @stack('scripts')

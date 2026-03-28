@@ -3,6 +3,49 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto p-4 md:p-8">
+
+    {{-- Notification Alert Ledger --}}
+    @if($notificationResponses->isNotEmpty())
+    <div class="mb-10">
+        <h3 class="text-lg font-bold text-on-surface mb-3 flex items-center gap-2">
+            <span class="material-symbols-outlined text-orange-500">notifications</span>
+            Notification Alerts
+        </h3>
+        <div class="overflow-x-auto rounded-xl border border-outline-variant/30 shadow-sm">
+            <table class="w-full text-sm">
+                <thead class="bg-surface-container text-on-surface-variant text-xs uppercase tracking-wider">
+                    <tr>
+                        <th class="px-4 py-3 text-left">Company</th>
+                        <th class="px-4 py-3 text-left">Action</th>
+                        <th class="px-4 py-3 text-left">Date</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-outline-variant/20 bg-surface-container-low">
+                    @foreach($notificationResponses as $response)
+                    <tr class="hover:bg-surface-container transition-colors">
+                        <td class="px-4 py-3 font-semibold text-on-surface">
+                            {{ $response->display_label }}
+                        </td>
+                        <td class="px-4 py-3">
+                            @if($response->action === 'buy')
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-primary-container text-on-primary-container">
+                                    <span class="material-symbols-outlined text-xs" style="font-size:12px">trending_up</span> BUY
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-surface-container text-on-surface-variant">
+                                    <span class="material-symbols-outlined text-xs" style="font-size:12px">do_not_disturb</span> DISMISSED
+                                </span>
+                            @endif
+                        </td>
+                        <td class="px-4 py-3 text-on-surface-variant">{{ $response->created_at->format('M j, Y · H:i') }}</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+    @endif
+
     <div class="mb-8">
         <h2 class="text-3xl font-extrabold text-on-surface tracking-tight mb-6">Order History</h2>
         <div class="flex flex-wrap gap-2 pb-2">
@@ -103,4 +146,33 @@
     </div>
     @endif
 </div>
+
+@push('scripts')
+<script>
+(function () {
+    const params = new URLSearchParams(window.location.search);
+    const action = params.get('notify_action');
+    const symbol = params.get('symbol');
+    const days   = params.get('days');
+
+    if (!action || !symbol) return;
+
+    // Record the response then clean the URL
+    fetch('/api/push/response', {
+        method:  'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+        },
+        body: JSON.stringify({ action, symbol, days: days ? parseInt(days, 10) : null }),
+    }).finally(() => {
+        // Remove query params from URL without reloading
+        const clean = window.location.pathname;
+        window.history.replaceState({}, '', clean);
+        // Reload so the ledger table shows the new row
+        window.location.reload();
+    });
+})();
+</script>
+@endpush
 @endsection

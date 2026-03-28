@@ -17,6 +17,51 @@ self.addEventListener('activate', event => {
     self.clients.claim();
 });
 
+self.addEventListener('push', event => {
+    const data = event.data ? event.data.json() : {};
+    const title = data.title || 'Trading Assistant';
+    const options = {
+        body:    data.body  || '',
+        icon:    data.icon  || '/icons/icon-192.png',
+        badge:   data.badge || '/icons/icon-192.png',
+        actions: data.actions || [],
+        data: {
+            symbol: data.symbol || null,
+            days:   data.days   ?? null,
+        },
+        requireInteraction: true,
+    };
+    event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener('notificationclick', event => {
+    event.notification.close();
+
+    const { symbol, days } = event.notification.data || {};
+    const action = event.action; // 'buy', 'dismiss', or '' (tapped body)
+
+    // Build the target URL with query params so the page can record the response
+    let url = '/orders';
+    if (symbol && (action === 'buy' || action === 'dismiss')) {
+        const params = new URLSearchParams({ notify_action: action, symbol });
+        if (action === 'buy' && days !== null) params.set('days', days);
+        url = `/orders?${params.toString()}`;
+    }
+
+    event.waitUntil(
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+            // Try to reuse an existing app window
+            for (const client of clientList) {
+                if ('focus' in client) {
+                    client.navigate(url);
+                    return client.focus();
+                }
+            }
+            if (clients.openWindow) return clients.openWindow(url);
+        })
+    );
+});
+
 self.addEventListener('fetch', event => {
     if (event.request.method !== 'GET') return;
     if (event.request.url.includes('/api/')) return; // Never cache API calls

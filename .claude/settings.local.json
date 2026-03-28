@@ -10,7 +10,13 @@
       "Bash(php -r \":*)",
       "Bash(grep -l \"StockPrice\\\\|UserSetting\\\\|CompanyFinancial\" \"c:\\\\Users\\\\Larbi\\\\Desktop\\\\Projects\\\\Projects\\\\trading-assistance-v4/database/migrations/\"*.php)",
       "Bash(curl -s \"https://finnhub.io/api/v1/search?q=orcl&exchange=US&token=d19nsb1r01qmm7u0btvgd19nsb1r01qmm7u0bu00\")",
-      "Bash(grep -r dashboard /c/Users/Larbi/Desktop/Projects/Projects/trading-assistance-v4/routes --include=*.php)"
+      "Bash(grep -r dashboard /c/Users/Larbi/Desktop/Projects/Projects/trading-assistance-v4/routes --include=*.php)",
+      "Bash(php -r \"echo phpinfo\\(\\);\")",
+      "Bash(php -r \"phpinfo\\(\\);\")",
+      "Read(//c/Program Files/Common Files//**)",
+      "Read(//c/Program Files/Common Files/**)",
+      "Read(//c/Windows/**)",
+      "Bash(OPENSSL_CONF=\"C:/Program Files/php-8.4.13/extras/ssl/openssl.cnf\" php -r \":*)"
     ]
   }
 }

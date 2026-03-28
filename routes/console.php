@@ -20,3 +20,8 @@ Schedule::command('financial:update --type=all')
     ->dailyAt('16:00')
     ->timezone('America/New_York')
     ->description('Afternoon financial data sync (NY 16:00)');
+
+Schedule::command('notifications:send-strong-buy')
+    ->dailyAt('09:00')
+    ->timezone('America/New_York')
+    ->description('Daily Strong Buy earnings alert push notification');

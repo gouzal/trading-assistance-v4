@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DTOs\OrderDTO;
 use App\Http\Requests\TradingOrderRequest;
+use App\Models\NotificationResponse;
 use App\Models\TradingOrder;
 use App\Services\TradingService;
 
@@ -48,6 +49,10 @@ class TradingController extends Controller
 
         $orders = $query->paginate(20)->withQueryString();
 
-        return view('orders.history', compact('orders'));
+        $notificationResponses = NotificationResponse::where('user_id', auth()->id())
+            ->orderByDesc('created_at')
+            ->get();
+
+        return view('orders.history', compact('orders', 'notificationResponses'));
     }
 }
