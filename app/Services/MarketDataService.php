@@ -60,12 +60,10 @@ class MarketDataService
 
     public function syncEarningsCalendar(string $from, string $to): int
     {
-        $earnings = Cache::remember(
-            "trading_assistant.earnings.{$from}.{$to}",
-            3600,
-            fn () => $this->provider->getEarningsCalendar($from, $to)
-        );
+        // Always fetch fresh — this runs twice daily, no need to cache DTOs
+        $earnings = $this->provider->getEarningsCalendar($from, $to);
 
+        // All companies in our registry, not just favorites
         $trackedSymbols = Company::pluck('symbol')->flip()->all();
 
         $count = 0;

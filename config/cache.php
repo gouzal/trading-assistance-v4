@@ -125,6 +125,14 @@ return [
     |
     */
 
-    'serializable_classes' => false,
+    'serializable_classes' => [
+        App\DTOs\EarningsDTO::class,
+        App\DTOs\QuoteDTO::class,
+        App\DTOs\SentimentDTO::class,
+        App\DTOs\CompanyProfileDTO::class,
+        App\DTOs\OrderDTO::class,
+        App\DTOs\AccountDTO::class,
+        App\DTOs\PositionDTO::class,
+    ],
 
 ];

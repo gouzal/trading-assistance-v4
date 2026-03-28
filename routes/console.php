@@ -9,5 +9,14 @@ Artisan::command('inspire', function () {
 
 use Illuminate\Support\Facades\Schedule;
 
-Schedule::command('financial:update --morning')->cron('0 9 * * *');
-Schedule::command('financial:update --evening')->cron('0 18 * * *');
+// Both runs sync earnings + quotes + sentiments + financials for companies
+// with an earnings release in the next 31 days. Times are NY (America/New_York).
+Schedule::command('financial:update --type=all')
+    ->dailyAt('08:30')
+    ->timezone('America/New_York')
+    ->description('Morning financial data sync (NY 08:30)');
+
+Schedule::command('financial:update --type=all')
+    ->dailyAt('16:00')
+    ->timezone('America/New_York')
+    ->description('Afternoon financial data sync (NY 16:00)');

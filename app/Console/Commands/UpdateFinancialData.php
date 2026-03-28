@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Models\Company;
+use App\Models\Earning;
 use App\Services\MarketDataService;
 use Illuminate\Console\Command;
 
@@ -53,49 +54,81 @@ class UpdateFinancialData extends Command
 
     private function syncEarnings(): void
     {
-        $this->info('Syncing earnings calendar...');
+        $this->info('Syncing earnings calendar (today → +31 days)...');
         $from  = now()->toDateString();
-        $to    = now()->addWeeks(4)->toDateString();
+        $to    = now()->addDays(31)->toDateString();
         $count = $this->service->syncEarningsCalendar($from, $to);
         $this->info("Synced {$count} earnings records.");
     }
 
+    /**
+     * Symbols in our companies registry that have an earnings release in the next 31 days.
+     * syncEarnings() must run first to populate this list.
+     */
+    private function upcomingEarningsSymbols(): array
+    {
+        $from = now()->toDateString();
+        $to   = now()->addDays(31)->toDateString();
+
+        return Earning::whereBetween('announcement_date', [$from, $to])
+            ->whereHas('company')
+            ->pluck('symbol')
+            ->unique()
+            ->values()
+            ->all();
+    }
+
     private function syncStocks(): void
     {
-        $this->info('Refreshing stock prices...');
-        Company::all()->each(function (Company $company) {
+        $symbols = $this->upcomingEarningsSymbols();
+        $this->info("Refreshing stock prices for " . count($symbols) . " companies with upcoming earnings...");
+
+        foreach ($symbols as $symbol) {
             try {
-                $this->service->refreshStockPrice($company->symbol);
+                $this->service->refreshStockPrice($symbol);
+                $this->line("  ✓ {$symbol}");
             } catch (\Exception $e) {
-                $this->warn("Failed to refresh {$company->symbol}: {$e->getMessage()}");
+                $this->warn("  ✗ {$symbol}: {$e->getMessage()}");
             }
-        });
+            // 1 call/company — pace at ~30/min to stay under the 60/min limit
+            sleep(2);
+        }
         $this->info('Stock prices refreshed.');
     }
 
     private function syncSentiments(): void
     {
-        $this->info('Syncing sentiments...');
-        Company::all()->each(function (Company $company) {
+        $symbols = $this->upcomingEarningsSymbols();
+        $this->info("Syncing sentiments for " . count($symbols) . " companies with upcoming earnings...");
+
+        foreach ($symbols as $symbol) {
             try {
-                $this->service->syncSentiment($company->symbol);
+                $this->service->syncSentiment($symbol);
+                $this->line("  ✓ {$symbol}");
             } catch (\Exception $e) {
-                $this->warn("Failed sentiment {$company->symbol}: {$e->getMessage()}");
+                $this->warn("  ✗ {$symbol}: {$e->getMessage()}");
             }
-        });
+            // 2 calls/company (news-sentiment + recommendation) — pace at ~24/min
+            sleep(3);
+        }
         $this->info('Sentiments synced.');
     }
 
     private function syncFinancials(): void
     {
-        $this->info('Syncing company financials...');
-        Company::all()->each(function (Company $company) {
+        $symbols = $this->upcomingEarningsSymbols();
+        $this->info("Syncing financials for " . count($symbols) . " companies with upcoming earnings...");
+
+        foreach ($symbols as $symbol) {
             try {
-                $this->service->syncCompanyFinancials($company->symbol);
+                $this->service->syncCompanyFinancials($symbol);
+                $this->line("  ✓ {$symbol}");
             } catch (\Exception $e) {
-                $this->warn("Failed financials {$company->symbol}: {$e->getMessage()}");
+                $this->warn("  ✗ {$symbol}: {$e->getMessage()}");
             }
-        });
+            // 3-4 calls/company (metrics + price-target + revenue-estimate + profile) — pace at ~36/min
+            sleep(5);
+        }
         $this->info('Financials synced.');
     }
 }

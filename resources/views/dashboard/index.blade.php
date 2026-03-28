@@ -12,17 +12,22 @@
                 <p class="text-on-surface-variant max-w-2xl">High-impact financial reporting dates for your watchlist and top market movers.</p>
             </div>
             <div class="flex flex-wrap items-center gap-3">
-                {{-- Sort toggles --}}
+                {{-- Sort toggles — independent, can both be active simultaneously --}}
                 @php
-                    $baseParams = ['weeks' => $weeks, 'watchlist_only' => $watchlistOnly ? '1' : '0'];
+                    $baseParams = [
+                        'weeks'          => $weeks,
+                        'watchlist_only' => $watchlistOnly ? '1' : '0',
+                        'sort_sentiment' => $sortSentiment ? '1' : '0',
+                        'sort_price'     => $sortPrice ? '1' : '0',
+                    ];
                 @endphp
-                <a href="{{ route('dashboard', array_merge($baseParams, ['sort' => $sort === 'sentiment' ? null : 'sentiment'])) }}"
-                    class="flex items-center gap-1.5 {{ $sort === 'sentiment' ? 'bg-secondary text-on-secondary' : 'bg-surface-container-high text-on-surface border border-outline-variant' }} px-4 py-2 rounded-xl text-sm font-medium transition-colors">
+                <a href="{{ route('dashboard', array_merge($baseParams, ['sort_sentiment' => $sortSentiment ? '0' : '1'])) }}"
+                    class="flex items-center gap-1.5 {{ $sortSentiment ? 'bg-secondary text-on-secondary' : 'bg-surface-container-high text-on-surface border border-outline-variant' }} px-4 py-2 rounded-xl text-sm font-medium transition-colors">
                     <span class="material-symbols-outlined text-sm">trending_up</span>
                     Buy Sentiment
                 </a>
-                <a href="{{ route('dashboard', array_merge($baseParams, ['sort' => $sort === 'price' ? null : 'price'])) }}"
-                    class="flex items-center gap-1.5 {{ $sort === 'price' ? 'bg-secondary text-on-secondary' : 'bg-surface-container-high text-on-surface border border-outline-variant' }} px-4 py-2 rounded-xl text-sm font-medium transition-colors">
+                <a href="{{ route('dashboard', array_merge($baseParams, ['sort_price' => $sortPrice ? '0' : '1'])) }}"
+                    class="flex items-center gap-1.5 {{ $sortPrice ? 'bg-secondary text-on-secondary' : 'bg-surface-container-high text-on-surface border border-outline-variant' }} px-4 py-2 rounded-xl text-sm font-medium transition-colors">
                     <span class="material-symbols-outlined text-sm">attach_money</span>
                     Price
                 </a>
