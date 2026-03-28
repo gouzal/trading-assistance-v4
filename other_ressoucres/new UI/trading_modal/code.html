@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TradingAssistant - Order Modal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "inverse-surface": "#3d2d28",
+              "on-secondary-fixed": "#3a0a00",
+              "on-secondary-container": "#772e17",
+              "on-surface": "#261814",
+              "error": "#ba1a1a",
+              "on-error": "#ffffff",
+              "surface-variant": "#f8ddd5",
+              "secondary-fixed-dim": "#ffb59e",
+              "surface-container-high": "#fee2db",
+              "on-tertiary-fixed-variant": "#574500",
+              "on-primary-container": "#ffeae5",
+              "on-primary": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "secondary-container": "#ff9879",
+              "on-error-container": "#93000a",
+              "inverse-primary": "#ffb59e",
+              "secondary-fixed": "#ffdbd0",
+              "error-container": "#ffdad6",
+              "tertiary": "#735c00",
+              "tertiary-container": "#c8a844",
+              "on-secondary-fixed-variant": "#793018",
+              "inverse-on-surface": "#ffede8",
+              "primary-container": "#c53b04",
+              "background": "#fff8f6",
+              "on-secondary": "#ffffff",
+              "secondary": "#97462d",
+              "primary-fixed": "#ffdbd0",
+              "outline": "#8e7068",
+              "on-primary-fixed": "#3a0a00",
+              "primary": "#9c2b00",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-fixed": "#ffe087",
+              "on-surface-variant": "#5a4139",
+              "outline-variant": "#e2bfb5",
+              "surface-bright": "#fff8f6",
+              "on-tertiary-fixed": "#241a00",
+              "on-primary-fixed-variant": "#852400",
+              "tertiary-fixed-dim": "#e5c35c",
+              "surface-tint": "#ae3200",
+              "surface": "#fff8f6",
+              "surface-container": "#ffe9e3",
+              "primary-fixed-dim": "#ffb59e",
+              "on-tertiary-container": "#4e3d00",
+              "surface-container-low": "#fff1ed",
+              "surface-container-highest": "#f8ddd5",
+              "on-background": "#261814",
+              "surface-dim": "#efd4cd"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-background min-h-screen">
+<!-- Top Navigation -->
+<header class="bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800 shadow-sm dark:shadow-none w-full top-0 sticky z-40">
+<div class="flex items-center justify-between px-4 h-16 w-full">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-orange-700 dark:text-orange-500" data-icon="candlestick_chart">candlestick_chart</span>
+<span class="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">TradingAssistant</span>
+</div>
+<div class="hidden md:flex gap-8 items-center">
+<a class="text-orange-600 dark:text-orange-400 font-medium" href="#">Dashboard</a>
+<a class="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors" href="#">Watchlist</a>
+<a class="text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors" href="#">Orders</a>
+</div>
+<div class="flex items-center gap-3">
+<button class="material-symbols-outlined text-zinc-500 hover:bg-zinc-100 dark:hover:bg-zinc-900 p-2 rounded-full transition-colors active:scale-95 duration-100" data-icon="account_circle">account_circle</button>
+</div>
+</div>
+</header>
+<main class="flex items-center justify-center min-h-[calc(100vh-128px)] p-4 bg-surface-container-low">
+<!-- Order Modal -->
+<div class="w-full max-w-lg bg-surface-container-lowest rounded-xl shadow-2xl border border-outline-variant overflow-hidden">
+<!-- Modal Header -->
+<div class="p-6 border-b border-outline-variant flex justify-between items-start">
+<div>
+<div class="flex items-center gap-2 mb-1">
+<h2 class="text-2xl font-bold text-on-surface leading-none">AAPL</h2>
+<span class="text-sm font-medium px-2 py-0.5 bg-surface-variant text-on-surface-variant rounded">Apple Inc.</span>
+</div>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-extrabold text-on-surface">$178.44</span>
+<span class="text-sm text-green-600 font-medium flex items-center">
+<span class="material-symbols-outlined text-xs mr-0.5" data-icon="arrow_upward">arrow_upward</span>
+                            1.24 (0.70%)
+                        </span>
+</div>
+<p class="text-xs text-on-surface-variant mt-1 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]" data-icon="schedule">schedule</span>
+                        Last updated 2 mins ago
+                    </p>
+</div>
+<button class="p-2 hover:bg-surface-container rounded-full transition-colors">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<!-- Modal Content -->
+<div class="p-6 space-y-6">
+<!-- Buy/Sell Tabs -->
+<div class="flex p-1 bg-surface-container-high rounded-lg">
+<button class="flex-1 py-2 text-center font-bold rounded-md bg-primary text-on-primary shadow-sm">Buy</button>
+<button class="flex-1 py-2 text-center font-bold rounded-md text-on-surface-variant hover:text-on-surface transition-colors">Sell</button>
+</div>
+<!-- Order Type Toggle -->
+<div class="space-y-2">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Order Type</label>
+<div class="grid grid-cols-2 gap-4">
+<button class="flex items-center justify-center gap-2 py-3 px-4 border-2 border-primary bg-primary-fixed-dim/10 rounded-xl text-primary font-semibold">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle" data-weight="fill">check_circle</span>
+                            Market
+                        </button>
+<button class="flex items-center justify-center gap-2 py-3 px-4 border-2 border-outline-variant rounded-xl text-on-surface-variant font-semibold hover:border-outline transition-all">
+                            Limit
+                        </button>
+</div>
+</div>
+<!-- Quantity Selection -->
+<div class="space-y-3">
+<div class="flex justify-between items-end">
+<label class="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Quantity (Shares)</label>
+<span class="text-xs font-medium text-on-surface-variant">Available: <span class="text-on-surface font-bold">12.5 Shares</span></span>
+</div>
+<div class="relative">
+<input class="w-full h-14 bg-surface-container border-2 border-transparent focus:border-primary rounded-xl px-4 text-xl font-bold text-on-surface focus:ring-0 transition-all outline-none" placeholder="0" type="number" value="10"/>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-1">
+<button class="p-1 hover:bg-outline-variant/20 rounded text-on-surface"><span class="material-symbols-outlined" data-icon="remove">remove</span></button>
+<button class="p-1 hover:bg-outline-variant/20 rounded text-on-surface"><span class="material-symbols-outlined" data-icon="add">add</span></button>
+</div>
+</div>
+<div class="grid grid-cols-4 gap-2">
+<button class="py-1.5 text-xs font-bold bg-surface-container text-on-surface-variant border border-outline-variant/30 rounded-lg hover:bg-outline-variant/20 transition-colors">1/4</button>
+<button class="py-1.5 text-xs font-bold bg-surface-container text-on-surface-variant border border-outline-variant/30 rounded-lg hover:bg-outline-variant/20 transition-colors">1/2</button>
+<button class="py-1.5 text-xs font-bold bg-surface-container text-on-surface-variant border border-outline-variant/30 rounded-lg hover:bg-outline-variant/20 transition-colors">3/4</button>
+<button class="py-1.5 text-xs font-bold bg-primary-container text-on-primary-container rounded-lg hover:brightness-110 transition-colors">ALL</button>
+</div>
+</div>
+<!-- Financial Summary -->
+<div class="bg-surface-container-low rounded-xl p-4 space-y-3">
+<div class="flex justify-between items-center">
+<span class="text-sm text-on-surface-variant">Buying Power</span>
+<span class="text-sm font-bold text-on-surface">$12,450.80</span>
+</div>
+<div class="flex justify-between items-center">
+<span class="text-sm text-on-surface-variant">Estimated Price / Share</span>
+<span class="text-sm font-bold text-on-surface">$178.44</span>
+</div>
+<div class="pt-3 border-t border-outline-variant/30 flex justify-between items-center">
+<span class="text-base font-bold text-on-surface">Total Order Value</span>
+<span class="text-lg font-extrabold text-primary">$1,784.40</span>
+</div>
+</div>
+</div>
+<!-- Modal Footer -->
+<div class="p-6 pt-0 flex flex-col sm:flex-row gap-3">
+<button class="flex-1 py-4 bg-primary text-on-primary font-extrabold text-lg rounded-xl shadow-lg shadow-primary/20 hover:brightness-110 active:scale-[0.98] transition-all">
+                    Confirm Order
+                </button>
+<button class="flex-1 py-4 bg-surface-variant text-on-surface-variant font-bold text-lg rounded-xl hover:bg-outline-variant transition-colors">
+                    Cancel Order
+                </button>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-6 pb-safe bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-t border-zinc-200 dark:border-zinc-800 shadow-[0_-1px_3px_rgba(0,0,0,0.05)]">
+<a class="flex flex-col items-center justify-center text-orange-600 dark:text-orange-500 bg-orange-50 dark:bg-orange-950/30 rounded-xl px-3 py-1 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-['Inter'] text-[11px] font-medium">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="star">star</span>
+<span class="font-['Inter'] text-[11px] font-medium">Watchlist</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-['Inter'] text-[11px] font-medium">Orders</span>
+</a>
+</nav>
+<!-- FAB (Suppressed contextually as per instructions for Details/Focused tasks) -->
+</body></html>

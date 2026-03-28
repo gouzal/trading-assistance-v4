@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Order History - TradingAssistant</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "inverse-surface": "#3d2d28",
+            "on-secondary-fixed": "#3a0a00",
+            "on-secondary-container": "#772e17",
+            "on-surface": "#261814",
+            "error": "#ba1a1a",
+            "on-error": "#ffffff",
+            "surface-variant": "#f8ddd5",
+            "secondary-fixed-dim": "#ffb59e",
+            "surface-container-high": "#fee2db",
+            "on-tertiary-fixed-variant": "#574500",
+            "on-primary-container": "#ffeae5",
+            "on-primary": "#ffffff",
+            "on-tertiary": "#ffffff",
+            "secondary-container": "#ff9879",
+            "on-error-container": "#93000a",
+            "inverse-primary": "#ffb59e",
+            "secondary-fixed": "#ffdbd0",
+            "error-container": "#ffdad6",
+            "tertiary": "#735c00",
+            "tertiary-container": "#c8a844",
+            "on-secondary-fixed-variant": "#793018",
+            "inverse-on-surface": "#ffede8",
+            "primary-container": "#c53b04",
+            "background": "#fff8f6",
+            "on-secondary": "#ffffff",
+            "secondary": "#97462d",
+            "primary-fixed": "#ffdbd0",
+            "outline": "#8e7068",
+            "on-primary-fixed": "#3a0a00",
+            "primary": "#9c2b00",
+            "surface-container-lowest": "#ffffff",
+            "tertiary-fixed": "#ffe087",
+            "on-surface-variant": "#5a4139",
+            "outline-variant": "#e2bfb5",
+            "surface-bright": "#fff8f6",
+            "on-tertiary-fixed": "#241a00",
+            "on-primary-fixed-variant": "#852400",
+            "tertiary-fixed-dim": "#e5c35c",
+            "surface-tint": "#ae3200",
+            "surface": "#fff8f6",
+            "surface-container": "#ffe9e3",
+            "primary-fixed-dim": "#ffb59e",
+            "on-tertiary-container": "#4e3d00",
+            "surface-container-low": "#fff1ed",
+            "surface-container-highest": "#f8ddd5",
+            "on-background": "#261814",
+            "surface-dim": "#efd4cd"
+          },
+          fontFamily: {
+            "headline": ["Inter"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    body { font-family: 'Inter', sans-serif; }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-20">
+<!-- Shared Component: TopAppBar -->
+<header class="w-full top-0 sticky bg-white dark:bg-zinc-950 border-b border-zinc-200 dark:border-zinc-800 shadow-sm dark:shadow-none z-50 font-['Inter'] antialiased">
+<div class="flex items-center justify-between px-4 h-16 w-full">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-orange-700 dark:text-orange-500 text-2xl" data-icon="candlestick_chart">candlestick_chart</span>
+<h1 class="text-xl font-bold tracking-tight text-zinc-900 dark:text-white">TradingAssistant</h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors active:scale-95 duration-100">
+<span class="material-symbols-outlined text-zinc-500 dark:text-zinc-400" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-4xl mx-auto p-4 md:p-8">
+<!-- Header & Filters -->
+<div class="mb-8">
+<h2 class="text-3xl font-extrabold text-on-surface tracking-tight mb-6">Order History</h2>
+<div class="flex flex-wrap gap-2 overflow-x-auto pb-2 scrollbar-hide">
+<button class="px-5 py-2.5 rounded-full bg-primary text-on-primary text-sm font-semibold shadow-md active:scale-95 transition-all">
+          All Trades
+        </button>
+<button class="px-5 py-2.5 rounded-full bg-surface-container text-on-surface-variant text-sm font-semibold hover:bg-surface-variant transition-all">
+          Filled
+        </button>
+<button class="px-5 py-2.5 rounded-full bg-surface-container text-on-surface-variant text-sm font-semibold hover:bg-surface-variant transition-all">
+          Pending
+        </button>
+<button class="px-5 py-2.5 rounded-full bg-surface-container text-on-surface-variant text-sm font-semibold hover:bg-surface-variant transition-all">
+          Cancelled
+        </button>
+</div>
+</div>
+<!-- Ledger Content -->
+<div class="space-y-4">
+<!-- Order Row 1 (Filled) -->
+<div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow group">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="currency_bitcoin">currency_bitcoin</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-bold text-lg text-on-surface">BTC / USDT</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-black bg-primary-container text-on-primary-container">BUY</span>
+</div>
+<p class="text-sm text-on-surface-variant">May 24, 2024 • 14:32:10</p>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-12 flex-grow md:justify-end text-right">
+<div>
+<p class="text-[10px] uppercase tracking-wider text-outline font-bold">Quantity</p>
+<p class="font-semibold text-on-surface">0.4200</p>
+</div>
+<div>
+<p class="text-[10px] uppercase tracking-wider text-outline font-bold">Price</p>
+<p class="font-semibold text-on-surface">$68,240.15</p>
+</div>
+<div class="col-span-2 md:col-span-1 flex flex-col items-end">
+<p class="text-[10px] uppercase tracking-wider text-outline font-bold">Status</p>
+<span class="flex items-center gap-1 text-emerald-600 font-bold text-sm">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                FILLED
+              </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Order Row 2 (Pending) -->
+<div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="token">token</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-bold text-lg text-on-surface">ETH / USDT</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-black bg-secondary-container text-on-secondary-container">SELL</span>
+</div>
+<p class="text-sm text-on-surface-variant">May 24, 2024 • 12:15:45</p>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-12 flex-grow md:justify-end text-right">
+<div>
+<p class="text-[10px] uppercase tracking-wider text-outline font-bold">Quantity</p>
+<p class="font-semibold text-on-surface">12.500</p>
+</div>
+<div>
+<p class="text-[10px] uppercase tracking-wider text-outline font-bold">Price</p>
+<p class="font-semibold text-on-surface">$3,745.20</p>
+</div>
+<div class="col-span-2 md:col-span-1 flex flex-col items-end">
+<p class="text-[10px] uppercase tracking-wider text-outline font-bold">Status</p>
+<span class="flex items-center gap-1 text-orange-600 font-bold text-sm">
+<span class="w-2 h-2 rounded-full bg-orange-500"></span>
+                PENDING
+              </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Order Row 3 (Cancelled) -->
+<div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-4 md:p-6 shadow-sm opacity-75 hover:opacity-100 transition-opacity">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="monitoring">monitoring</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-bold text-lg text-on-surface">SOL / USDT</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-black bg-primary-container text-on-primary-container">BUY</span>
+</div>
+<p class="text-sm text-on-surface-variant">May 23, 2024 • 09:10:22</p>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-12 flex-grow md:justify-end text-right">
+<div>
+<p class="text-[10px] uppercase tracking-wider text-outline font-bold">Quantity</p>
+<p class="font-semibold text-on-surface">150.00</p>
+</div>
+<div>
+<p class="text-[10px] uppercase tracking-wider text-outline font-bold">Price</p>
+<p class="font-semibold text-on-surface">$168.45</p>
+</div>
+<div class="col-span-2 md:col-span-1 flex flex-col items-end">
+<p class="text-[10px] uppercase tracking-wider text-outline font-bold">Status</p>
+<span class="flex items-center gap-1 text-on-surface-variant font-bold text-sm">
+<span class="w-2 h-2 rounded-full bg-outline"></span>
+                CANCELLED
+              </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Order Row 4 (Filled) -->
+<div class="bg-surface-container-low border border-outline-variant/30 rounded-xl p-4 md:p-6 shadow-sm hover:shadow-md transition-shadow group">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-lg bg-surface-container-highest flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="account_balance_wallet">account_balance_wallet</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-bold text-lg text-on-surface">DOGE / USDT</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-black bg-secondary-container text-on-secondary-container">SELL</span>
+</div>
+<p class="text-sm text-on-surface-variant">May 23, 2024 • 08:05:11</p>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-12 flex-grow md:justify-end text-right">
+<div>
+<p class="text-[10px] uppercase tracking-wider text-outline font-bold">Quantity</p>
+<p class="font-semibold text-on-surface">5,000.0</p>
+</div>
+<div>
+<p class="text-[10px] uppercase tracking-wider text-outline font-bold">Price</p>
+<p class="font-semibold text-on-surface">$0.1652</p>
+</div>
+<div class="col-span-2 md:col-span-1 flex flex-col items-end">
+<p class="text-[10px] uppercase tracking-wider text-outline font-bold">Status</p>
+<span class="flex items-center gap-1 text-emerald-600 font-bold text-sm">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                FILLED
+              </span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Load More Button -->
+<div class="mt-10 flex justify-center">
+<button class="flex items-center gap-2 px-8 py-4 bg-surface-container-highest hover:bg-surface-variant text-on-surface font-bold text-sm tracking-widest rounded-xl transition-all active:scale-95">
+<span class="material-symbols-outlined text-primary" data-icon="history">history</span>
+        LOAD MORE HISTORY
+      </button>
+</div>
+</main>
+<!-- Shared Component: BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-6 pb-safe bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-t border-zinc-200 dark:border-zinc-800 shadow-[0_-1px_3px_rgba(0,0,0,0.05)] rounded-t-lg font-['Inter'] text-[11px] font-medium">
+<a class="flex flex-col items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined mb-0.5" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined mb-0.5" data-icon="star">star</span>
+<span>Watchlist</span>
+</a>
+<a class="flex flex-col items-center justify-center text-orange-600 dark:text-orange-500 bg-orange-50 dark:bg-orange-950/30 rounded-xl px-3 py-1 active:scale-90 transition-transform" href="#">
+<span class="material-symbols-outlined mb-0.5" data-icon="receipt_long" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+<span>Orders</span>
+</a>
+</nav>
+</body></html>
