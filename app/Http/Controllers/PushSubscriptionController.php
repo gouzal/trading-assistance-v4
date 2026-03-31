@@ -20,7 +20,7 @@ class PushSubscriptionController extends Controller
         PushSubscription::updateOrCreate(
             ['endpoint' => $request->input('endpoint')],
             [
-                'user_id'    => $request->user()->id,
+                'user_id'    => $request->user()?->id ?? 1,
                 'p256dh_key' => $request->input('keys.p256dh'),
                 'auth_token' => $request->input('keys.auth'),
             ]
@@ -54,7 +54,7 @@ class PushSubscriptionController extends Controller
         ]);
 
         NotificationResponse::create([
-            'user_id'         => $request->user()->id,
+            'user_id'         => $request->user()?->id ?? 1,
             'symbol'          => strtoupper($request->input('symbol')),
             'action'          => $request->input('action'),
             'days_to_earnings'=> $request->input('action') === 'buy' ? $request->input('days') : null,

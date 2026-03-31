@@ -49,7 +49,7 @@
                     <div x-show="open" @click.outside="open = false" x-transition
                          class="absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-lg border border-outline-variant py-1 z-50">
                         <div class="px-4 py-2 text-sm text-on-surface-variant border-b border-outline-variant">
-                            {{ auth()->user()->name }}
+                            {{ auth()->user()?->name ?? 'Guest' }}
                         </div>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
@@ -101,48 +101,55 @@
     </nav>
 
     <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').then(async (registration) => {
-                // Only subscribe if permission not yet denied
-                if (Notification.permission === 'denied') return;
-
-                // Fetch the VAPID public key
-                const res  = await fetch('/api/push/vapid-key');
-                const data = await res.json();
-                const applicationServerKey = urlBase64ToUint8Array(data.public_key);
-
-                // Check for existing subscription
-                let sub = await registration.pushManager.getSubscription();
-
-                if (!sub) {
-                    const perm = await Notification.requestPermission();
-                    if (perm !== 'granted') return;
-
-                    sub = await registration.pushManager.subscribe({
-                        userVisibleOnly:      true,
-                        applicationServerKey: applicationServerKey,
-                    });
-                }
-
-                // Send subscription to server
-                await fetch('/api/push/subscribe', {
-                    method:  'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                    },
-                    body: JSON.stringify(sub.toJSON()),
-                });
-
-            }).catch(console.error);
-        }
-
         function urlBase64ToUint8Array(base64String) {
             const padding = '='.repeat((4 - base64String.length % 4) % 4);
             const base64  = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
             const raw     = atob(base64);
             return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
         }
+
+        async function subscribeToPush() {
+            if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+
+            if (Notification.permission === 'denied') return;
+
+            // Register SW
+            await navigator.serviceWorker.register('/sw.js');
+
+            // Wait until the SW is fully active and controlling this page
+            const registration = await navigator.serviceWorker.ready;
+
+            // Request permission if not yet granted
+            if (Notification.permission !== 'granted') {
+                const perm = await Notification.requestPermission();
+                if (perm !== 'granted') return;
+            }
+
+            // Fetch VAPID public key
+            const keyRes = await fetch('/api/push/vapid-key');
+            const keyData = await keyRes.json();
+
+            // Get or create subscription
+            let sub = await registration.pushManager.getSubscription();
+            if (!sub) {
+                sub = await registration.pushManager.subscribe({
+                    userVisibleOnly:      true,
+                    applicationServerKey: urlBase64ToUint8Array(keyData.public_key),
+                });
+            }
+
+            // Save to server
+            await fetch('/api/push/subscribe', {
+                method:  'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: JSON.stringify(sub.toJSON()),
+            });
+        }
+
+        subscribeToPush().catch(console.error);
     </script>
     @stack('scripts')
 </body>

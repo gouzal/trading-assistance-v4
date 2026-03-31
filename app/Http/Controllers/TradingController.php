@@ -40,7 +40,9 @@ class TradingController extends Controller
 
     public function history()
     {
-        $query = TradingOrder::where('user_id', auth()->id())
+        $userId = auth()->id() ?? 0;
+
+        $query = TradingOrder::where('user_id', $userId)
             ->orderByDesc('created_at');
 
         if (request('status')) {
@@ -49,7 +51,7 @@ class TradingController extends Controller
 
         $orders = $query->paginate(20)->withQueryString();
 
-        $notificationResponses = NotificationResponse::where('user_id', auth()->id())
+        $notificationResponses = NotificationResponse::where('user_id', $userId)
             ->orderByDesc('created_at')
             ->get();
 
