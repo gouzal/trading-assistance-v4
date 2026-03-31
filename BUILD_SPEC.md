@@ -1,6 +1,6 @@
 # TradingAssistant — Complete Build Specification
 
-**Version**: 3.0 (Unified)
+**Version**: 4.0 (Push Notifications)
 **Target**: Laravel PWA, small cloud server (free PaaS tier or equivalent), 2–10 users
 **Data Source**: Finnhub paid tier (all data) + Alpaca trading API (Moomoo: future)
 
@@ -76,6 +76,8 @@ app/
 │   ├── Sentiment.php
 │   ├── StockPrice.php
 │   ├── TradingOrder.php
+│   ├── PushSubscription.php     # Web Push device subscriptions
+│   ├── NotificationResponse.php # Buy/Dismiss actions from push notifications
 │   └── ApiLog.php
 ├── Providers/
 │   ├── ApiServiceProvider.php      # Binds interfaces → implementations
@@ -91,6 +93,12 @@ app/
     ├── MarketDataService.php       # Uses MarketDataProviderInterface
     ├── TradingService.php          # Uses TradingProviderInterface
     └── SentimentService.php
+
+app/Console/Commands/
+├── UpdateFinancialData.php         # Sync market data to DB
+├── CacheWarmUp.php                 # Pre-warm file cache
+├── SendStrongBuyNotifications.php  # Daily push alerts (9 AM NY)
+└── SendTestPushNotification.php    # Manual test push (PUSH_TEST_MODE=true → every 30min)
 
 resources/views/
 ├── layouts/app.blade.php
@@ -669,7 +677,76 @@ A live search input available on both the **watchlist page** and as a **quick-ad
 | API data (earnings, quotes) | Network-First |
 | Company profiles / financials | Stale-While-Revalidate |
 
-### 8.2 Web App Manifest
+### 8.2 Web Push Notifications
+
+Push notifications are sent daily at **9:00 AM New York time** for every company rated **Strong Buy** with earnings in the next 30 days. Each company gets its own notification.
+
+| Property | Value |
+|----------|-------|
+| Package | `minishlink/web-push` v10 |
+| Protocol | Web Push + VAPID |
+| Keys | `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` in `.env` |
+| CA bundle | `C:/Users/Larbi/cacert.pem` (Windows only — passed as `verify` to Guzzle) |
+
+**Notification format:**
+
+```text
+Title:  Strong Buy — GOOGL
+Body:   Alphabet · Earnings in 25 days
+Actions: [📈 Buy]  [✖ Dismiss]
+```
+
+**User action flow:**
+
+- Tap **Buy** → app records `GOOGL (-25 days)` in Notification Alerts ledger
+- Tap **Dismiss** → app records `GOOGL (N/A)` in Notification Alerts ledger
+
+**Tables:**
+
+```sql
+CREATE TABLE push_subscriptions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    endpoint TEXT NOT NULL UNIQUE,
+    p256dh_key VARCHAR(255) NOT NULL,
+    auth_token VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+
+CREATE TABLE notification_responses (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    symbol VARCHAR(20) NOT NULL,
+    action VARCHAR(10) NOT NULL,       -- 'buy' | 'dismiss'
+    days_to_earnings SMALLINT NULL,    -- null when dismissed
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+```
+
+**API routes:**
+
+```text
+GET  /api/push/vapid-key    → returns public VAPID key for browser subscription
+POST /api/push/subscribe    → saves device subscription to DB
+POST /api/push/unsubscribe  → removes device subscription from DB
+POST /api/push/response     → records Buy/Dismiss action from notification
+```
+
+**Schedule:**
+
+```text
+0 9 * * *    php artisan notifications:send-strong-buy   # daily 9 AM NY
+*/30 * * * * php artisan notifications:test-push         # only when PUSH_TEST_MODE=true
+```
+
+**Strong Buy calculation** (in `MarketDataService::mapAnalystRating()`):
+
+- `buyRatio = (buy + strongBuy) / (buy + strongBuy + sell + strongSell + hold)`
+- `>= 0.70` → Strong Buy, `>= 0.50` → Buy, `>= 0.30` → Hold, `>= 0.10` → Sell, else → Strong Sell
+
+### 8.3 Web App Manifest
 
 | Property | Value |
 |----------|-------|
